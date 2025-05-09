@@ -1,0 +1,34 @@
+type User {
+    id: ID!
+    username: String!
+    email: String!
+    roles: [String!]!
+    createdAt: String!
+    updatedAt: String!
+}
+
+input SignUpInput {
+    username: String!
+    email: String!
+    password: String!
+}
+
+input SignInInput {
+    username: String!
+    password: String!
+}
+
+type AuthToken {
+    token: String!
+    tokenType: String!
+}
+
+type Query {
+    me: User
+    users: [User]
+}
+
+type Mutation {
+    signUp(input: SignUpInput!): User
+    signIn(input: SignInInput!): AuthToken
+}

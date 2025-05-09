@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: security-sample
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  exposed:
+    generate-ddl: true
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+    
+# JWT ??
+jwt:
+  secret: ${JWT_SECRET:verysecureandlongkeyforsigningthejsonwebtokens}
+  expiration: 86400000  # 1? (??? ??)
+
+# ?? ??
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.graphql: DEBUG
+    kim.wonung: DEBUG
+    Exposed: DEBUG
