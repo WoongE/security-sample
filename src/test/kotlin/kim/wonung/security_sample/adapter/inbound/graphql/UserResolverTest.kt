@@ -1,16 +1,16 @@
 package kim.wonung.security_sample.adapter.inbound.graphql
 
-import kim.wonung.security_sample.application.service.UserService
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.graphql.test.tester.GraphQlTester
-import org.mockito.Mockito.`when`
 import kim.wonung.security_sample.adapter.inbound.graphql.resolver.UserResolver
+import kim.wonung.security_sample.application.service.UserService
 import kim.wonung.security_sample.domain.model.Role
 import kim.wonung.security_sample.domain.model.User
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.graphql.GraphQlTest
+import org.springframework.graphql.test.tester.GraphQlTester
 import org.springframework.security.test.context.support.WithMockUser
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import java.time.Instant
 
 @GraphQlTest(UserResolver::class)
@@ -19,7 +19,7 @@ class UserResolverTest {
     @Autowired
     private lateinit var graphQlTester: GraphQlTester
 
-    @MockBean
+    @MockitoBean
     private lateinit var userService: UserService
 
     @Test
@@ -35,11 +35,12 @@ class UserResolverTest {
             createdAt = Instant.now(),
             updatedAt = Instant.now()
         )
-        
+
         `when`(userService.getUserByUsername("testuser")).thenReturn(testUser)
-        
+
         // When/Then
-        graphQlTester.document("""
+        graphQlTester.document(
+            """
             query {
                 me {
                     id
@@ -48,10 +49,11 @@ class UserResolverTest {
                     roles
                 }
             }
-        """)
-        .execute()
-        .path("me.username").entity(String::class.java).isEqualTo("testuser")
-        .path("me.email").entity(String::class.java).isEqualTo("test@example.com")
-        .path("me.roles").entityList(String::class.java).contains("USER")
+        """
+        )
+            .execute()
+            .path("me.username").entity(String::class.java).isEqualTo("testuser")
+            .path("me.email").entity(String::class.java).isEqualTo("test@example.com")
+            .path("me.roles").entityList(String::class.java).contains("USER")
     }
 }

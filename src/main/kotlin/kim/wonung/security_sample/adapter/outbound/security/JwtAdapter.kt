@@ -18,9 +18,7 @@ class JwtAdapter(
     private val expirationTime: Long
 ) : JwtPort {
 
-    private val key: SecretKey by lazy {
-        Keys.hmacShaKeyFor(secret.toByteArray())
-    }
+    private val key: SecretKey by lazy { Keys.hmacShaKeyFor(secret.toByteArray()) }
 
     override fun generateToken(username: String): String {
         val now = Date()
@@ -34,24 +32,19 @@ class JwtAdapter(
             .compact()
     }
 
-    override fun validateToken(token: String): Boolean {
-        return try {
-            val claims = getClaims(token)
-            !claims.expiration.before(Date())
-        } catch (e: Exception) {
-            false
-        }
+    override fun validateToken(token: String): Boolean = try {
+        val claims = getClaims(token)
+        !claims.expiration.before(Date())
+    } catch (e: Exception) {
+        false
     }
 
-    override fun getUsernameFromToken(token: String): String {
-        return getClaims(token).subject
-    }
+    override fun getUsernameFromToken(token: String): String = getClaims(token).subject
 
-    private fun getClaims(token: String): Claims {
-        return Jwts.parser()
+    private fun getClaims(token: String): Claims =
+        Jwts.parser()
             .verifyWith(key)
             .build()
             .parseSignedClaims(token)
             .payload
-    }
 }

@@ -1,9 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    val kotlinVersion = "2.1.20"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
     id("org.springframework.boot") version "3.4.5"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("plugin.jpa") version "1.9.25"
+    kotlin("plugin.jpa") version kotlinVersion
+    id("com.netflix.dgs.codegen") version "8.0.4"
 }
 
 group = "kim.wonung"
@@ -49,6 +51,13 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
+}
+
+tasks.generateJava {
+    schemaPaths.add("${projectDir}/src/main/resources/graphql")
+    packageName = "kim.wonung.security_sample.adapter.inbound.graphql.generated"
+    language = "kotlin"
+    generateClient = true
 }
 
 allOpen {

@@ -17,7 +17,6 @@ import org.springframework.stereotype.Controller
 class UserResolver(
     private val userService: UserService
 ) {
-    
     @MutationMapping
     fun signUp(@Argument input: SignUpInput): UserDto {
         val user = userService.signUp(
@@ -27,7 +26,7 @@ class UserResolver(
         )
         return UserDto.fromDomain(user)
     }
-    
+
     @MutationMapping
     fun signIn(@Argument input: SignInInput): AuthTokenDto {
         val token = userService.signIn(
@@ -36,17 +35,17 @@ class UserResolver(
         )
         return AuthTokenDto(token = token)
     }
-    
+
     @QueryMapping
     fun me(@AuthenticationPrincipal userDetails: UserDetails?): UserDto? {
         if (userDetails == null) {
             return null
         }
-        
+
         val user = userService.getUserByUsername(userDetails.username)
         return user?.let { UserDto.fromDomain(it) }
     }
-    
+
     @QueryMapping
     @PreAuthorize("hasRole('ADMIN')")
     fun users(): List<UserDto> {

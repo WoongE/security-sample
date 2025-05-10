@@ -16,33 +16,29 @@ class JwtAuthenticationFilter(
     private val jwtPort: JwtPort,
     private val userDetailsService: UserDetailsService
 ) : OncePerRequestFilter() {
-    
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
-        filterChain: FilterChain
+        filterChain: FilterChain,
     ) {
         val authHeader = request.getHeader("Authorization")
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response)
             return
         }
-        
-        val token = authHeader.substring(7)
-        
+
+        val token = authHeader.substring(7) // "Bearer " 부분을 제거
+
         if (jwtPort.validateToken(token)) {
             val username = jwtPort.getUsernameFromToken(token)
             val userDetails = userDetailsService.loadUserByUsername(username)
-            
-            val authentication = UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.authorities
-            )
+            val authentication = UsernamePasswordAuthenticationToken(userDetails, null, userDetails.authorities)
             authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
-            
             SecurityContextHolder.getContext().authentication = authentication
         }
-        
+
         filterChain.doFilter(request, response)
     }
 }
